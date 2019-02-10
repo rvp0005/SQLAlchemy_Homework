@@ -38,8 +38,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/start<br/>"
+        f"/api/v1.0/start/end<br/>"
     )
 
 
@@ -87,13 +87,21 @@ def tobs():
         temp_data.append(temp_dict)
     return jsonify(temp_data)
 
-#@app.route("/api/v1.0/<start>")
+@app.route("/api/v1.0/start")
+def start():
+    start_date = '2017-05-14'
+    start_results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start_date ).all()
+    return jsonify(start_results)
 
 
-#@app.route("/api/v1.0/<start>/<end>")
 
 
-
+@app.route("/api/v1.0/start/end")
+def end():
+    start_date = '2017-05-14'    
+    end_date = '2017-05-22'
+    end_results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+    return jsonify(end_results)
 
 if __name__ == '__main__':
     app.run(debug=True)
